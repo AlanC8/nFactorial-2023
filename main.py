@@ -1,9 +1,9 @@
 import random
-import time
 import pygame
 pygame.init()
-my_font = pygame.font.SysFont('Comic Sans MS', 20)
 start_ticks = pygame.time.get_ticks()
+
+level = random.randint(1,4)
 
 WHITE = (255, 255, 255)
 GREY = (20, 20, 20)
@@ -11,7 +11,7 @@ BLACK = (0, 0, 0)
 PURPLE = (100, 0, 100)
 RED = (255, 0, 0)
 
-size = (701, 701)
+size = (700, 700)
 screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption("Maze Generator")
@@ -21,13 +21,16 @@ done = False
 
 clock = pygame.time.Clock()
 
-width = 25
+width = 25 * level
+if level == 3:
+    level = 2
 cols = int(size[0] / width)
 rows = int(size[1] / width)
 
 stack = []
 
 pos = (0, 0)
+
 
 
 class Player(pygame.sprite.Sprite):
@@ -93,14 +96,6 @@ def load_player(background):
     py = 680
     return Player(pimg, (px, py), background)
 
-# random level
-def load_player_random_level(background):
-    pimg = pygame.Surface((30, 30))
-    pimg.fill(pygame.Color("blue"))
-
-    px = random.randint(0, rows - 1) * width + width // 2
-    py = random.randint(0, cols - 1) * width + width // 2
-    return Player(pimg, (px, py), background)
 
 class Cell():
     def __init__(self, x, y):
@@ -206,9 +201,7 @@ current_cell = grid[0][0]
 next_cell = 0
 
 # -------- Main Program Loop -----------
-global cnt
 pygame.font.init()
-font = pygame.font.SysFont(None, 30)
 
 def loose():
     playing = True
@@ -235,7 +228,6 @@ def youWin():
                 exit()
 
         pygame.display.update()
-
 def main():
     global current_cell, grid
     player = None
@@ -307,10 +299,30 @@ def main():
             for y in range(rows):
                 for x in range(cols):
                     grid[y][x].draw()
-        seconds = (pygame.time.get_ticks() - start_ticks) // 1000
-        text = font.render(str(seconds), False, PURPLE)
-        screen.blit(text, (650, 20))
-        pygame.display.update()
+
+        if level == 4:
+            my_font = pygame.font.SysFont('Comic Sans MS', 24)
+            text_surface = my_font.render("You have 60s", False, (0, 0, 0))
+            screen.blit(text_surface, (500, 30))
+            seconds = (pygame.time.get_ticks() - start_ticks) // 1000
+            if (120 - seconds <= 60):
+                loose()
+        if level == 2 or level == 3:
+            my_font = pygame.font.SysFont('Comic Sans MS', 24)
+            text_surface = my_font.render("You have 120s", False, (0, 0, 0))
+            screen.blit(text_surface, (500, 30))
+            seconds = (pygame.time.get_ticks() - start_ticks) // 1000
+            if (180 - seconds <= 60):
+                loose()
+        if level == 1:
+            my_font = pygame.font.SysFont('Comic Sans MS', 24)
+            text_surface = my_font.render("You have 180s", False, (0, 0, 0))
+            screen.blit(text_surface, (500, 30))
+            seconds = (pygame.time.get_ticks() - start_ticks) // 1000
+            if (240 - seconds <= 60):
+                loose()
+
+        pygame.display.flip()
 
 
 main()
