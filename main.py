@@ -21,7 +21,7 @@ done = False
 
 clock = pygame.time.Clock()
 
-width = 100
+width = 25
 cols = int(size[0] / width)
 rows = int(size[1] / width)
 
@@ -209,19 +209,31 @@ next_cell = 0
 global cnt
 pygame.font.init()
 font = pygame.font.SysFont(None, 30)
+
 def loose():
     playing = True
     while playing:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                main()
+                exit()
             if event.type == pygame.KEYDOWN or pygame.KEYUP:
                 if pygame.key == pygame.K_SPACE:
-                    main()
+                    playing = False
 
         bg = pygame.image.load("background.png")
         bg = pygame.transform.scale(bg, (701,701))
         screen.blit(bg, (0,0))
+        pygame.display.update()
+
+def youWin():
+    winpage = pygame.image.load("win-bg.jpg")
+    screen.blit(winpage, (0,0))
+    playing = True
+    while playing:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+
         pygame.display.update()
 
 def main():
@@ -273,8 +285,8 @@ def main():
                 player.rect = player.image.get_rect(center=player.pos)
                 # clear screen
                 screen.fill(pygame.Color("darkslategray"))
-                loose()
                 play = False
+                youWin()
         else:
             current_cell.visited = True
             current_cell.current = True
@@ -299,7 +311,6 @@ def main():
         text = font.render(str(seconds), False, PURPLE)
         screen.blit(text, (650, 20))
         pygame.display.update()
-
 
 
 main()
