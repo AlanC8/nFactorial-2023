@@ -11,7 +11,7 @@ BLACK = (0, 0, 0)
 PURPLE = (100, 0, 100)
 RED = (255, 0, 0)
 
-size = (700, 700)
+size = (701, 701)
 screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption("Maze Generator")
@@ -23,10 +23,10 @@ clock = pygame.time.Clock()
 
 width = 25 * level
 if level == 3:
-    level = 2
+    width = 23 * level
 cols = int(size[0] / width)
 rows = int(size[1] / width)
-
+print(level)
 stack = []
 
 pos = (0, 0)
@@ -209,9 +209,7 @@ def loose():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
-            if event.type == pygame.KEYDOWN or pygame.KEYUP:
-                if pygame.key == pygame.K_SPACE:
-                    playing = False
+
 
         bg = pygame.image.load("background.png")
         bg = pygame.transform.scale(bg, (701,701))
@@ -302,10 +300,10 @@ def main():
 
         if level == 4:
             my_font = pygame.font.SysFont('Comic Sans MS', 24)
-            text_surface = my_font.render("You have 60s", False, (0, 0, 0))
+            text_surface = my_font.render("You have 30s", False, (0, 0, 0))
             screen.blit(text_surface, (500, 30))
             seconds = (pygame.time.get_ticks() - start_ticks) // 1000
-            if (120 - seconds <= 60):
+            if (70 - seconds <= 60):
                 loose()
         if level == 2 or level == 3:
             my_font = pygame.font.SysFont('Comic Sans MS', 24)
