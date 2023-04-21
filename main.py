@@ -1,8 +1,9 @@
 import random
 import time
-
 import pygame
 pygame.init()
+my_font = pygame.font.SysFont('Comic Sans MS', 20)
+start_ticks = pygame.time.get_ticks()
 
 WHITE = (255, 255, 255)
 GREY = (20, 20, 20)
@@ -14,7 +15,8 @@ size = (701, 701)
 screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption("Maze Generator")
-
+# bg = pygame.image.load("bg.png")
+# bg = pygame.transform.scale(bg, (701,701))
 done = False
 
 clock = pygame.time.Clock()
@@ -53,25 +55,25 @@ class Player(pygame.sprite.Sprite):
         if minx == maxx and pressed[pygame.K_w]:
             nexty = (self.rect.top - testdist) // width
             if celly == nexty or (nexty >= 0 and not grid[celly][cellx].walls[0]):
-                move += (0, -2)
+                move += (0, -1)
 
         # test move right
         elif miny == maxy and pressed[pygame.K_d]:
             nextx = (self.rect.right + testdist) // width
             if cellx == nextx or (nextx < cols and not grid[celly][cellx].walls[1]):
-                move += (2, 0)
+                move += (1, 0)
 
         # test move down
         elif minx == maxx and pressed[pygame.K_s]:
             nexty = (self.rect.bottom + testdist) // width
             if celly == nexty or (nexty < rows and not grid[celly][cellx].walls[2]):
-                move += (0, 2)
+                move += (0, 1)
 
                 # test move left
         elif miny == maxy and pressed[pygame.K_a]:
             nextx = (self.rect.left - testdist) // width
             if cellx == nextx or (nextx >= 0 and not grid[celly][cellx].walls[3]):
-                move += (-2, 0)
+                move += (-1, 0)
 
         self.pos = self.pos + move * (dt / 5)
         self.rect.center = self.pos
@@ -79,20 +81,26 @@ class Player(pygame.sprite.Sprite):
 
 def load_background(filename=None):
     name = filename if filename else "background.jpg"
-    background = pygame.image.load("unnamed.png")
-    background = pygame.transform.rotate(background, -90)
-    background = pygame.transform.scale(background, (800, 600))
+    background = pygame.image.load("background.png")
+    background = pygame.transform.scale(background, (701, 701))
     return background
 
-
 def load_player(background):
+    pimg = pygame.Surface((10, 10))
+    pimg.fill(pygame.Color("blue"))
+
+    px = 680
+    py = 680
+    return Player(pimg, (px, py), background)
+
+# random level
+def load_player_random_level(background):
     pimg = pygame.Surface((30, 30))
     pimg.fill(pygame.Color("blue"))
 
     px = random.randint(0, rows - 1) * width + width // 2
     py = random.randint(0, cols - 1) * width + width // 2
     return Player(pimg, (px, py), background)
-
 
 class Cell():
     def __init__(self, x, y):
@@ -196,12 +204,28 @@ for y in range(rows):
 
 current_cell = grid[0][0]
 next_cell = 0
-# -------- Main Program Loop -----------
 
+# -------- Main Program Loop -----------
+global cnt
+pygame.font.init()
+font = pygame.font.SysFont(None, 30)
+def loose():
+    playing = True
+    while playing:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                main()
+            if event.type == pygame.KEYDOWN or pygame.KEYUP:
+                if pygame.key == pygame.K_SPACE:
+                    main()
+
+        bg = pygame.image.load("background.png")
+        bg = pygame.transform.scale(bg, (701,701))
+        screen.blit(bg, (0,0))
+        pygame.display.update()
 
 def main():
     global current_cell, grid
-
     player = None
     initialized = False
     current_maze = None
@@ -249,8 +273,8 @@ def main():
                 player.rect = player.image.get_rect(center=player.pos)
                 # clear screen
                 screen.fill(pygame.Color("darkslategray"))
+                loose()
                 play = False
-
         else:
             current_cell.visited = True
             current_cell.current = True
@@ -271,8 +295,11 @@ def main():
             for y in range(rows):
                 for x in range(cols):
                     grid[y][x].draw()
+        seconds = (pygame.time.get_ticks() - start_ticks) // 1000
+        text = font.render(str(seconds), False, PURPLE)
+        screen.blit(text, (650, 20))
+        pygame.display.update()
 
-        pygame.display.flip()
 
 
 main()
