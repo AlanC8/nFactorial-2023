@@ -303,7 +303,7 @@ def main():
             text_surface = my_font.render("You have 30s", False, (0, 0, 0))
             screen.blit(text_surface, (500, 30))
             seconds = (pygame.time.get_ticks() - start_ticks) // 1000
-            if (70 - seconds <= 60):
+            if (90 - seconds <= 60):
                 loose()
         if level == 2 or level == 3:
             my_font = pygame.font.SysFont('Comic Sans MS', 24)
