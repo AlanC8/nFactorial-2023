@@ -1,9 +1,10 @@
 import random
 import pygame
+
 pygame.init()
 start_ticks = pygame.time.get_ticks()
 
-level = random.randint(1,4)
+level = random.randint(1, 4)
 
 WHITE = (255, 255, 255)
 GREY = (20, 20, 20)
@@ -30,7 +31,6 @@ print(level)
 stack = []
 
 pos = (0, 0)
-
 
 
 class Player(pygame.sprite.Sprite):
@@ -88,6 +88,7 @@ def load_background(filename=None):
     background = pygame.transform.scale(background, (701, 701))
     return background
 
+
 def load_player(background):
     pimg = pygame.Surface((10, 10))
     pimg.fill(pygame.Color("blue"))
@@ -132,7 +133,8 @@ class Cell():
                                  ((self.x + width), (self.y + width)), 1)  # right
             if self.walls[2]:
                 pygame.draw.line(screen, BLACK, ((
-                    self.x + width), (self.y + width)), (self.x, (self.y + width)), 1)  # bottom
+                                                         self.x + width), (self.y + width)), (self.x, (self.y + width)),
+                                 1)  # bottom
             if self.walls[3]:
                 pygame.draw.line(
                     screen, BLACK, (self.x, (self.y + width)), (self.x, self.y), 1)  # left
@@ -203,6 +205,7 @@ next_cell = 0
 # -------- Main Program Loop -----------
 pygame.font.init()
 
+
 def loose():
     playing = True
     while playing:
@@ -210,15 +213,15 @@ def loose():
             if event.type == pygame.QUIT:
                 exit()
 
-
         bg = pygame.image.load("background.png")
-        bg = pygame.transform.scale(bg, (701,701))
-        screen.blit(bg, (0,0))
+        bg = pygame.transform.scale(bg, (701, 701))
+        screen.blit(bg, (0, 0))
         pygame.display.update()
+
 
 def youWin():
     winpage = pygame.image.load("win-bg.jpg")
-    screen.blit(winpage, (0,0))
+    screen.blit(winpage, (0, 0))
     playing = True
     while playing:
         for event in pygame.event.get():
@@ -226,13 +229,15 @@ def youWin():
                 exit()
 
         pygame.display.update()
+
+
 def main():
     global current_cell, grid
     player = None
     initialized = False
     current_maze = None
     dt = 0
-    screen_rect = screen.get_rect()
+    # screen_rect = screen.get_rect()
     clock = pygame.time.Clock()
     sprites = pygame.sprite.Group()
 
@@ -323,5 +328,5 @@ def main():
         pygame.display.flip()
 
 
-main()
-pygame.quit()
+if __name__ == "__main__":
+    main()
