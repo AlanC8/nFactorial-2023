@@ -91,7 +91,7 @@ def load_background(filename=None):
 
 def load_player(background):
     pimg = pygame.Surface((10, 10))
-    pimg.fill(pygame.Color("blue"))
+    pimg.fill(pygame.Color("red"))
 
     px = 680
     py = 680
@@ -123,7 +123,7 @@ class Cell():
         if self.current:
             pygame.draw.rect(screen, RED, (self.x, self.y, width, width))
         elif self.visited:
-            pygame.draw.rect(screen, WHITE, (self.x, self.y, width, width))
+            pygame.draw.rect(screen, (114, 25, 224), (self.x, self.y, width, width))
 
             if self.walls[0]:
                 pygame.draw.line(screen, BLACK, (self.x, self.y),
@@ -258,7 +258,7 @@ def main():
 
         if play == True:
 
-            pygame.draw.rect(screen, PURPLE, player.rect)
+            pygame.draw.rect(screen, WHITE, player.rect)
             sprites.update(None, dt)
             sprites.draw(screen)
 
@@ -327,6 +327,14 @@ def main():
 
         pygame.display.flip()
 
-
 if __name__ == "__main__":
     main()
+
+cnt = 0
+if main():
+    cnt+= 1
+    f = open("record.txt", "a")
+    seconds = (pygame.time.get_ticks() - start_ticks) // 1000
+    if youWin():
+        f.write(seconds)
+    print(cnt)
