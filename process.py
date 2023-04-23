@@ -1,6 +1,6 @@
 import random
 import pygame
-
+import main as MAIN
 pygame.init()
 start_ticks = pygame.time.get_ticks()
 
@@ -32,6 +32,29 @@ stack = []
 
 pos = (0, 0)
 
+
+def pmusic(file):
+    pygame.init()
+    pygame.mixer.init()
+    pygame.mixer.music.load(file)
+    pygame.mixer.music.play()
+    pygame.mixer.music.set_volume(0.1)
+    pygame.mixer.music.get_busy()
+
+def stopmusic():
+    pygame.mixer.music.stop()
+
+
+def getmixerargs():
+    pygame.mixer.init()
+    freq, size, chan = pygame.mixer.get_init()
+    return freq, size, chan
+
+
+def initMixer():
+    BUFFER = 3072
+    FREQ, SIZE, CHAN = getmixerargs()
+    pygame.mixer.init(FREQ, SIZE, CHAN, BUFFER)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, image, pos, background):
@@ -205,14 +228,19 @@ next_cell = 0
 # -------- Main Program Loop -----------
 pygame.font.init()
 
-
 def loose():
     playing = True
+    cnt = 0
     while playing:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    MAIN.main_menu()
+                    cnt += 1
 
+        print(cnt)
         bg = pygame.image.load("background.png")
         bg = pygame.transform.scale(bg, (701, 701))
         screen.blit(bg, (0, 0))
@@ -223,13 +251,18 @@ def youWin():
     winpage = pygame.image.load("win-bg.jpg")
     screen.blit(winpage, (0, 0))
     playing = True
+    my_font = pygame.font.SysFont('Comic Sans MS', 30)
     while playing:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
-
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    MAIN.main_menu()
+        text_surface = my_font.render('TAP SPACE TO RESTART', False, WHITE)
+        screen.blit(text_surface, (180,250))
         pygame.display.update()
-
+newArr = []
 
 def main():
     global current_cell, grid
@@ -248,10 +281,10 @@ def main():
         player = load_player(background)
         sprites.add(player)
         initialized = True
-
     play = False
     while not done:
         # --- Main event loop
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
@@ -305,18 +338,24 @@ def main():
 
         if level == 4:
             my_font = pygame.font.SysFont('Comic Sans MS', 24)
-            text_surface = my_font.render("You have 30s", False, (0, 0, 0))
+            text_surface = my_font.render("You have 20s", False, (0, 0, 0))
             screen.blit(text_surface, (500, 30))
             seconds = (pygame.time.get_ticks() - start_ticks) // 1000
-            if (90 - seconds <= 60):
+            if (80 - seconds <= 60):
                 loose()
+            with open('record.txt', 'a') as myfile:
+                myfile.writelines(str(seconds) + "\n")
+            print(seconds)
+            newArr.append(seconds)
         if level == 2 or level == 3:
             my_font = pygame.font.SysFont('Comic Sans MS', 24)
-            text_surface = my_font.render("You have 120s", False, (0, 0, 0))
+            text_surface = my_font.render("You have 40s", False, (0, 0, 0))
             screen.blit(text_surface, (500, 30))
             seconds = (pygame.time.get_ticks() - start_ticks) // 1000
-            if (180 - seconds <= 60):
+            if (100 - seconds <= 60):
                 loose()
+            with open('record.txt', 'a') as myfile:
+                myfile.writelines(str(seconds) + "\n")
         if level == 1:
             my_font = pygame.font.SysFont('Comic Sans MS', 24)
             text_surface = my_font.render("You have 180s", False, (0, 0, 0))
@@ -324,17 +363,9 @@ def main():
             seconds = (pygame.time.get_ticks() - start_ticks) // 1000
             if (240 - seconds <= 60):
                 loose()
-
+            with open('record.txt', 'a') as myfile:
+                myfile.writelines(str(seconds) + "\n")
         pygame.display.flip()
 
 if __name__ == "__main__":
     main()
-
-cnt = 0
-if main():
-    cnt+= 1
-    f = open("record.txt", "a")
-    seconds = (pygame.time.get_ticks() - start_ticks) // 1000
-    if youWin():
-        f.write(seconds)
-    print(cnt)
